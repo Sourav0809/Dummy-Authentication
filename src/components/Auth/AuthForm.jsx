@@ -7,8 +7,8 @@ const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
 
-  const email = useRef();
-  const passWord = useRef();
+  let email = useRef();
+  let passWord = useRef();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -21,20 +21,41 @@ const AuthForm = () => {
     const emailValue = email.current.value;
     const pwdValue = passWord.current.value;
     try {
+      // if user login
+
       if (!isLogin) {
         const submitedResponse = await axios.post(
           "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCMLARLFG9Pi7D-8Pfv1fr3CWESfCQwEh8",
           { email: emailValue, password: pwdValue },
           { headers: { "Content-Type": "application/json" } }
         );
+        if (submitedResponse.status == 200) {
+          toast.dark("User Registered ! ");
+        }
+      }
 
-        console.log(submitedResponse);
+      // if user sign up
+
+      if (isLogin) {
+        const loginResponse = await axios.post(
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCMLARLFG9Pi7D-8Pfv1fr3CWESfCQwEh8",
+          { email: emailValue, password: pwdValue },
+          { headers: { "Content-Type": "application/json" } }
+        );
+        if (loginResponse.status == 200) {
+          toast.dark("User LoggedIn ! ");
+        }
+        console.log(loginResponse.data.idToken);
+        console.log(loginResponse);
       }
     } catch (error) {
       console.log(error);
       toast.dark(error.response.data.error.message);
     }
+
     setShowLoader(false);
+    email.current.value = "";
+    passWord.current.value = "";
   };
   const loaderScreen = (
     <div>
