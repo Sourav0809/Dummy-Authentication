@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import AuthContext from "../Store/AuthContext";
+
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
@@ -24,6 +25,7 @@ const AuthForm = () => {
 
     const emailValue = email.current.value;
     const pwdValue = passWord.current.value;
+
     try {
       // if user login
 
