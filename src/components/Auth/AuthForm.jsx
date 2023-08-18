@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import classes from "./AuthForm.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import AuthContext from "../Store/AuthContext";
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
+  const [mainLoader, setMainLoader] = useState(true);
   let email = useRef();
   let passWord = useRef();
 
@@ -15,9 +16,18 @@ const AuthForm = () => {
 
   const authCtx = useContext(AuthContext);
 
+  // if the user refresh the page
+
+  useEffect(() => {
+    const idToken = localStorage.getItem("idToken");
+    authCtx.logIn(idToken);
+  }, []);
+
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
   };
+
+  // when user signup or login
 
   const submitedFormHandeler = async (e) => {
     e.preventDefault();
@@ -52,8 +62,11 @@ const AuthForm = () => {
           toast.dark("User LoggedIn ! ");
         }
         console.log(loginResponse.data.idToken);
-        // Calling the contexts log in function to set the tokenm
+
+        // Calling the contexts log in function to set the token
+
         authCtx.logIn(loginResponse.data.idToken);
+        localStorage.setItem("idToken", loginResponse.data.idToken);
       }
     } catch (error) {
       console.log(error);
