@@ -7,6 +7,7 @@ const MainNavigation = () => {
   const authCtx = useContext(AuthContext);
   const logOutHandler = () => {
     authCtx.logOut();
+    localStorage.removeItem("idToken");
   };
 
   return (
