@@ -2,13 +2,17 @@ import { useState, useRef } from "react";
 import classes from "./AuthForm.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { useContext } from "react";
+import AuthContext from "../Store/AuthContext";
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
-
   let email = useRef();
   let passWord = useRef();
+
+  // using the context here
+
+  const authCtx = useContext(AuthContext);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -46,7 +50,8 @@ const AuthForm = () => {
           toast.dark("User LoggedIn ! ");
         }
         console.log(loginResponse.data.idToken);
-        console.log(loginResponse);
+        // Calling the contexts log in function to set the tokenm
+        authCtx.logIn(loginResponse.data.idToken);
       }
     } catch (error) {
       console.log(error);
