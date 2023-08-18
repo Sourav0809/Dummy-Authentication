@@ -23,7 +23,7 @@ const ProfileForm = () => {
         "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCMLARLFG9Pi7D-8Pfv1fr3CWESfCQwEh8",
         newPwdObj
       );
-      if (submitedRes.status == 200) {
+      if (submitedRes.status <= 200) {
         toast.warn("Password Changed !");
       }
       console.log(submitedRes);
