@@ -1,27 +1,21 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import classes from "./AuthForm.module.css";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import AuthContext from "../Store/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const AuthForm = () => {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showLoader, setShowLoader] = useState(false);
-  const [mainLoader, setMainLoader] = useState(true);
-  let email = useRef();
-  let passWord = useRef();
 
   // using the context here
-
   const authCtx = useContext(AuthContext);
 
-  // if the user refresh the page
-
-  useEffect(() => {
-    const idToken = localStorage.getItem("idToken");
-    authCtx.logIn(idToken);
-  }, []);
+  let email = useRef();
+  let passWord = useRef();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -29,7 +23,7 @@ const AuthForm = () => {
 
   // when user signup or login
 
-  const submitedFormHandeler = async (e) => {
+  async function submitedFormHandeler(e) {
     e.preventDefault();
     setShowLoader(true);
 
@@ -61,12 +55,17 @@ const AuthForm = () => {
         if (loginResponse.status == 200) {
           toast.dark("User LoggedIn ! ");
         }
+
+        navigate("/login");
         console.log(loginResponse.data.idToken);
 
         // Calling the contexts log in function to set the token
 
         authCtx.logIn(loginResponse.data.idToken);
         localStorage.setItem("idToken", loginResponse.data.idToken);
+
+        // calling the timer function to ensure user activity
+        authCtx.timer();
       }
     } catch (error) {
       console.log(error);
@@ -76,7 +75,7 @@ const AuthForm = () => {
     setShowLoader(false);
     email.current.value = "";
     passWord.current.value = "";
-  };
+  }
   const loaderScreen = (
     <div>
       <img
